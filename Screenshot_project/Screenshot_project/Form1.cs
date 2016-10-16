@@ -27,11 +27,14 @@ namespace Screenshot_project
 
         private Bitmap CaptureScreenShot() // делаем скриншот экрана 
         {
-            Rectangle bounds = Screen.GetBounds(Point.Empty);
+            Point MousePoint = new Point(Cursor.Position.X, Cursor.Position.Y); //координаты мыши
+            Rectangle bounds = Screen.GetBounds(MousePoint);
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
             using (Graphics gr = Graphics.FromImage(bitmap))
-            { gr.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size); }
-
+            {
+                gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
+                //скриним тот экран, на котором в данный момент находится мышь
+            }
             return bitmap;
         }
 
