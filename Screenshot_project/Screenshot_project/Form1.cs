@@ -15,50 +15,18 @@ namespace Screenshot_project
 {
     public partial class Form1 : Form
     {
-        static private string TEMP = Environment.GetEnvironmentVariable("TEMP"); //путь к %TEMP%
-        DirectoryInfo drInfo = new DirectoryInfo(TEMP + "\\ScreenShotTool"); //директория %TEMP%\ScreenShotTool
-
-        public Form1()
+        public Form1() //Инициализация формы
         {
-            if (!drInfo.Exists) //Существует ли директория %TEMP%\ScreenShotTool
-                drInfo.Create(); //Если нет - создаем
+            FileWork.Create_directory();
             InitializeComponent();
         }
 
-        private void SaveScreenShot(string filename, ImageFormat format) // сохраняем скриншот экрана 
+        private void button1_Click(object sender, EventArgs e) //Скриншот!
         {
-            Bitmap screenShot = CaptureScreenShot();
-            screenShot.Save(filename, format);
-            screenShot = null; //so the value is no longer in use and can be cleaned up with GC
-            GC.Collect(); //cleaning up memory
-            GC.WaitForPendingFinalizers();
+            FileWork.SaveScreenShot(ImageFormat.Jpeg);            
         }
 
-        private Bitmap CaptureScreenShot() // делаем скриншот экрана 
-        {
-            Point MousePoint = new Point(Cursor.Position.X, Cursor.Position.Y); //координаты мыши
-            Rectangle bounds = Screen.GetBounds(MousePoint);
-            Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
-            using (Graphics gr = Graphics.FromImage(bitmap))
-            {
-                gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
-                //скриним тот экран, на котором в данный момент находится мышь
-            }
-            return bitmap;
-        }
-
-        private string Generate_Name() //Генерация имени файла
-        {
-            int count = drInfo.GetFiles().Count(); //Считаем количество файлов в папке
-            return drInfo.FullName + "\\" + (count + 1) + ".jpeg"; //Названием файла будет его порядковый номер
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SaveScreenShot(Generate_Name(), ImageFormat.Jpeg);            
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
+        private void Form1_Resize(object sender, EventArgs e) //Сворачивание окна
         {
             if (this.WindowState == FormWindowState.Minimized) 
             {
@@ -67,7 +35,7 @@ namespace Screenshot_project
             }
         }
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) //Разворачивание окна
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
@@ -77,14 +45,14 @@ namespace Screenshot_project
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) //Закрытие программы
         {
             Application.Exit();
         }
 
-        private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e)
+        private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e) //Скриншот из трея
         {
-            SaveScreenShot(Generate_Name(), ImageFormat.Jpeg);
+            FileWork.SaveScreenShot(ImageFormat.Jpeg);
         }
     }
 }
