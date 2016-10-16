@@ -16,9 +16,7 @@ namespace Screenshot_project
     public partial class Form1 : Form
     {
         static private string TEMP = Environment.GetEnvironmentVariable("TEMP"); //путь к %TEMP%
-        public const int FILENAME_LENGTH = 15;
         DirectoryInfo drInfo = new DirectoryInfo(TEMP + "\\ScreenShotTool"); //директория %TEMP%\ScreenShotTool
-        private static Random random = new Random();
 
         public Form1()
         {
@@ -32,6 +30,8 @@ namespace Screenshot_project
             Bitmap screenShot = CaptureScreenShot();
             screenShot.Save(filename, format);
             screenShot = null; //so the value is no longer in use and can be cleaned up with GC
+            GC.Collect(); //cleaning up memory
+            GC.WaitForPendingFinalizers();
         }
 
         private Bitmap CaptureScreenShot() // делаем скриншот экрана 
@@ -55,10 +55,7 @@ namespace Screenshot_project
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SaveScreenShot(Generate_Name(), ImageFormat.Jpeg);
-            GC.Collect(); //cleaning up memory
-            GC.WaitForPendingFinalizers(); 
-            
+            SaveScreenShot(Generate_Name(), ImageFormat.Jpeg);            
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -70,7 +67,7 @@ namespace Screenshot_project
             }
         }
 
-        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
@@ -78,6 +75,16 @@ namespace Screenshot_project
                 this.ShowInTaskbar = true;
                 notifyIcon1.Visible = false;
             }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveScreenShot(Generate_Name(), ImageFormat.Jpeg);
         }
     }
 }
