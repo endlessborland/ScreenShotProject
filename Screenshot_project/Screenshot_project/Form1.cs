@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,20 +15,22 @@ namespace Screenshot_project
 {
     public partial class Form1 : Form
     {
+        static private string TEMP = Environment.GetEnvironmentVariable("TEMP"); //путь к %TEMP%
         public const int FILENAME_LENGTH = 15;
-
-        private string path = "D:\\Desktop\\screenshot_project\\";
+        DirectoryInfo drInfo = new DirectoryInfo(TEMP + "\\ScreenShotTool"); //директория %TEMP%\ScreenShotTool
         private static Random random = new Random();
 
         public Form1()
         {
+            if (!drInfo.Exists) //Существует ли директория %TEMP%\ScreenShotTool
+                drInfo.Create(); //Если нет - создаем
             InitializeComponent();
         }
 
         private void SaveScreenShot(string filename, ImageFormat format) // сохраняем скриншот экрана 
         {
             Bitmap screenShot = CaptureScreenShot();
-            screenShot.Save(filename, format); //i feel like there are some exceptions needed here
+            screenShot.Save(filename, format);
             screenShot = null; //so the value is no longer in use and can be cleaned up with GC
         }
 
@@ -44,17 +47,15 @@ namespace Screenshot_project
             return bitmap;
         }
 
-        /*private string Generate_Name()
+        private string Generate_Name() //Генерация имени файла
         {
-            generate name somehow
-            
+            int count = drInfo.GetFiles().Count(); //Считаем количество файлов в папке
+            return drInfo.FullName + "\\" + (count + 1) + ".jpeg"; //Названием файла будет его порядковый номер
         }
-        */
 
         private void button1_Click(object sender, EventArgs e)
         {
-            SaveScreenShot("D:\\Desktop\\screenshot_project\\Screenshot1.jpeg", ImageFormat.Jpeg);
-            //SaveScreenShot(path + Generate_Name(), ImageFormat.Jpeg);
+            SaveScreenShot(Generate_Name(), ImageFormat.Jpeg);
             GC.Collect(); //cleaning up memory
             GC.WaitForPendingFinalizers(); 
             
