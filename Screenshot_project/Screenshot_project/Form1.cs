@@ -1,13 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -15,18 +6,21 @@ namespace Screenshot_project
 {
     public partial class Form1 : Form
     {
-        public Form1() //Инициализация формы
+        public Form1()
         {
-            FileWork.Create_directory();
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e) //Скриншот!
+        private void button1_Click(object sender, EventArgs e)
         {
-            FileWork.SaveScreenShot(ImageFormat.Jpeg);            
+            ScreenShot ScreenShot = new ScreenShot();
+            ScreenShot.CaptureScreen();
+            ScreenShot = null;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();            
         }
 
-        private void Form1_Resize(object sender, EventArgs e) //Сворачивание окна
+        private void Form1_Resize(object sender, EventArgs e)
         {
             if (this.WindowState == FormWindowState.Minimized) 
             {
@@ -35,7 +29,7 @@ namespace Screenshot_project
             }
         }
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) //Разворачивание окна
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
@@ -45,14 +39,18 @@ namespace Screenshot_project
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) //Закрытие программы
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e) //Скриншот из трея
+        private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FileWork.SaveScreenShot(ImageFormat.Jpeg);
+            ScreenShot ScreenShot = new ScreenShot();
+            ScreenShot.CaptureScreen();
+            ScreenShot = null;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
     }
 }
