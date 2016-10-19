@@ -36,6 +36,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.makeAScreenshotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,9 +45,9 @@
             this.button1.AutoSize = true;
             this.button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.button1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.button1.Location = new System.Drawing.Point(0, 46);
+            this.button1.Location = new System.Drawing.Point(0, 106);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(305, 23);
+            this.button1.Size = new System.Drawing.Size(329, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Screenshot!";
             this.button1.UseVisualStyleBackColor = true;
@@ -69,7 +70,7 @@
             this.preferencesToolStripMenuItem,
             this.makeAScreenshotToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(173, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(173, 70);
             // 
             // exitToolStripMenuItem
             // 
@@ -91,12 +92,24 @@
             this.makeAScreenshotToolStripMenuItem.Text = "Make a screenshot";
             this.makeAScreenshotToolStripMenuItem.Click += new System.EventHandler(this.makeAScreenshotToolStripMenuItem_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.Location = new System.Drawing.Point(13, 13);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(304, 20);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.Text = "adress goes here";
+            // 
             // Form1
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(305, 69);
+            this.ClientSize = new System.Drawing.Size(329, 129);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Form1";
@@ -116,6 +129,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem makeAScreenshotToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

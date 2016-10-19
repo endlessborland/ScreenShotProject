@@ -13,7 +13,7 @@ namespace Screenshot_project
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ScreenShot ScreenShot = new ScreenShot();
+            ScreenShot ScreenShot = new ScreenShot(textBox1.ToString());
             ScreenShot.CaptureScreen();
             ScreenShot = null;
             GC.Collect();
@@ -46,7 +46,7 @@ namespace Screenshot_project
 
         private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScreenShot ScreenShot = new ScreenShot();
+            ScreenShot ScreenShot = new ScreenShot(textBox1.ToString());
             ScreenShot.CaptureScreen();
             ScreenShot = null;
             GC.Collect();
