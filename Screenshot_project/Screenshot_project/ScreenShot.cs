@@ -100,6 +100,7 @@ namespace Screenshot_project
                 FileName = filename,
             };
             content.Headers.TryAddWithoutValidation("type", "image/png");
+            content.Headers.TryAddWithoutValidation("content-length", stream.Length.ToString());
             form.Add(content);
             MessageBox.Show(content.Headers.ToString());
 
