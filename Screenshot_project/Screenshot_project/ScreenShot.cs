@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 
 namespace Screenshot_project
 {
@@ -48,6 +49,7 @@ namespace Screenshot_project
             {
                 gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             }
+            Send();
             Save();
         }
         /// <summary>
@@ -56,7 +58,6 @@ namespace Screenshot_project
         private void Save()
         {
             bitmap.Save(filename, ImageFormat.Png);
-            Send();
         }
         /// <summary>
         /// Метод проверяет существование пути, и, если путь не существует, создает его
@@ -82,22 +83,23 @@ namespace Screenshot_project
 
         private async void Send()
         {
-            using (var client = new HttpClient())
+            HttpClient client = new HttpClient();
+            //client.BaseAddress = new Uri(URL);
+            MultipartFormDataContent form = new MultipartFormDataContent();
+            HttpContent content = new StringContent("up_file");
+            form.Add(content, "up_file");
+            //var stream = await file.OpenStreamForReadAsync();
+            var stream = new MemoryStream();
+            bitmap.Save(stream, ImageFormat.Png);
+            content = new StreamContent(stream);
+            content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
-                var values = new Dictionary<string, string>
-                {
-                    {"up_image", BitmapToByte().ToString() }
-                };
-                var content = new FormUrlEncodedContent(values);
-
-                /* StreamWriter file = new StreamWriter(path.FullName + "\\log.txt", true);
-                file.WriteLine(DateTime.Now.ToString() + ": " + values.Values.ToString());
-                file.Close();*/
-
-                var response = await client.PostAsync(URL, content);
-                var responseString = await response.Content.ReadAsStringAsync();
-                // responseString shall be parsed
-            }
+                Name = "up_file",
+                FileName = filename
+            };
+            form.Add(content);
+            //var response = await client.PostAsync("upload.php", form);
+            var response = await client.PostAsync(URL, form);
         }
     }
 }

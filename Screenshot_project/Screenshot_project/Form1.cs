@@ -46,7 +46,7 @@ namespace Screenshot_project
 
         private void makeAScreenshotToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ScreenShot ScreenShot = new ScreenShot(textBox1.ToString());
+            ScreenShot ScreenShot = new ScreenShot("http://192.168.43.163:4567/upload");
             ScreenShot.CaptureScreen();
             ScreenShot = null;
             GC.Collect();
