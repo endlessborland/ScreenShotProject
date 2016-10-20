@@ -86,16 +86,16 @@ namespace Screenshot_project
             HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri(URL);
             MultipartFormDataContent form = new MultipartFormDataContent();
-            HttpContent content = new StringContent("up_file");
-            form.Add(content, "up_file");
+            HttpContent content = new StringContent("up_image");
+            form.Add(content, "up_image");
             //var stream = await file.OpenStreamForReadAsync();
             var stream = new MemoryStream();
             bitmap.Save(stream, ImageFormat.Png);
             content = new StreamContent(stream);
             content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
-                Name = "up_file",
-                FileName = filename
+                Name = "up_image",
+                FileName = filename,
             };
             form.Add(content);
             //var response = await client.PostAsync("upload.php", form);
