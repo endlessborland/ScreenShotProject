@@ -88,6 +88,8 @@ namespace Screenshot_project
             imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
             requestContent.Add(imageContent, "up_image", "image.png");
             var client = new HttpClient();
+            MessageBox.Show(requestContent.Headers.ToString());
+
             await client.PostAsync(URL, requestContent);
         }
 
