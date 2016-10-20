@@ -92,6 +92,7 @@ namespace Screenshot_project
             var stream = new MemoryStream();
             bitmap.Save(stream, ImageFormat.Png);
             content = new StreamContent(stream);
+            MessageBox.Show(stream.Length.ToString());
             content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
                 Name = "up_image",
