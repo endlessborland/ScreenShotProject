@@ -91,14 +91,18 @@ namespace Screenshot_project
             //var stream = await file.OpenStreamForReadAsync();
             var stream = new MemoryStream();
             bitmap.Save(stream, ImageFormat.Png);
+            
             content = new StreamContent(stream);
-            MessageBox.Show(stream.Length.ToString());
+            //MessageBox.Show(stream.Length.ToString());
             content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
             {
                 Name = "up_image",
                 FileName = filename,
             };
+            content.Headers.TryAddWithoutValidation("type", "image/png");
             form.Add(content);
+            MessageBox.Show(content.Headers.ToString());
+
             //var response = await client.PostAsync("upload.php", form);
             var response = await client.PostAsync(URL, form);
         }
