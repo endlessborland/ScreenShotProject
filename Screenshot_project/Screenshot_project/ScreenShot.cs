@@ -83,6 +83,16 @@ namespace Screenshot_project
 
         private async void Send()
         {
+            var requestContent = new MultipartFormDataContent();
+            var imageContent = new ByteArrayContent(BitmapToByte());
+            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+            requestContent.Add(imageContent, "up_image", "image.png");
+            var client = new HttpClient();
+            await client.PostAsync(URL, requestContent);
+        }
+
+        /*private async void Send()
+        {
             HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri(URL);
             MultipartFormDataContent form = new MultipartFormDataContent();
@@ -105,7 +115,7 @@ namespace Screenshot_project
             MessageBox.Show(content.Headers.ToString());
 
             //var response = await client.PostAsync("upload.php", form);
-            var response = await client.PostAsync(URL, form);
+            var response = await client.PostAsync(URL, form);*/
         }
     }
-}
+
