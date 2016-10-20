@@ -8,27 +8,28 @@ using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace Screenshot_project
 {
     /// <summary>
-    /// Этот класс используется для создания снимка экрана
+    /// This class is used to create screen shots
     /// </summary>
     class ScreenShot
     {
 
-        private DirectoryInfo path; //Файл находится по адресу, "path\..."
-        private string filename; //Полное имя файла, "path\filename.png"
-        private Bitmap bitmap; //Само изображение
-        private Point MousePosition; //Позиция мыши (на момент снимка экрана)
-        private Rectangle bounds; //Размер экрана
+        private DirectoryInfo path; //File path is, "path\..."
+        private string filename; //Full filename, "path\filename.png"
+        private Bitmap bitmap; //The image itself
+        private Point MousePosition; //Pointer position (at the moment of screen shot)
+        private Rectangle bounds; //Screen bounds
         private string URL;
 
         /// <summary>
-        /// Конструктор класса
-        /// Получает положение курсора мыши, чтобы определить, какой экран снимать
-        /// Определяет размер этого экрана
-        /// Генерирует полное имя файла, в который сохраняется снимок экрана
+        /// Class constructor:
+        /// * Gets pointer position to determine which screen should we save
+        /// * Gets screen's bounds
+        /// * Generates full file name for the screen shot
         /// </summary>
         public ScreenShot(string url)
         {
@@ -37,30 +38,30 @@ namespace Screenshot_project
             bitmap = new Bitmap(bounds.Width, bounds.Height); //создание пустого изображения
             path = new DirectoryInfo(Environment.GetEnvironmentVariable("TEMP") + "\\ScreenShotTool"); //генерация пути
             URL = url;
-            Create_directory(); //проверка существования пути
-            Generate_Name(); //генерация имени файла
+            Create_directory(); //check if path exists
+            Generate_Name(); //filename generation
         }
         /// <summary>
-        /// Метод делает снимок экрана
+        /// This method captures a screenshot
         /// </summary>
-        public void CaptureScreen()
+        public async void CaptureScreen()
         {
             using (Graphics gr = Graphics.FromImage(bitmap))
             {
                 gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             }
-            Send();
+            string jsonresponse = await Send(); //JSON string server send us... TODO: parse JSON for further use
             Save();
         }
         /// <summary>
-        /// Метод, очевидно, сохраняет файл в "%TEMP%\filename.png"
+        /// This method, obviously, saves image to "%TEMP%\filename.png"
         /// </summary>
         private void Save()
         {
             bitmap.Save(filename, ImageFormat.Png);
         }
         /// <summary>
-        /// Метод проверяет существование пути, и, если путь не существует, создает его
+        /// This method checks if path exists, and if it does not, creates it 
         /// </summary>
         private void Create_directory()
         {
@@ -68,7 +69,7 @@ namespace Screenshot_project
                 path.Create();
         }
         /// <summary>
-        /// Метод генерирует имя файла, фактически, имя файла - его порядковый номер в папке
+        /// Method generates file name, in fact, file name is its number in dir
         /// </summary>
         private void Generate_Name()
         {
@@ -81,43 +82,18 @@ namespace Screenshot_project
             return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
         }
 
-        private async void Send()
+        public async Task<string> Send()
         {
             var requestContent = new MultipartFormDataContent();
             var imageContent = new ByteArrayContent(BitmapToByte());
             imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
             requestContent.Add(imageContent, "up_image", "image.png");
             var client = new HttpClient();
-            MessageBox.Show(requestContent.Headers.ToString());
+           // MessageBox.Show(requestContent.Headers.ToString());
 
-            await client.PostAsync(URL, requestContent);
+            HttpResponseMessage response = await client.PostAsync(URL, requestContent);
+            return await response.Content.ReadAsStringAsync(); //wait for content to be read and return it as string
         }
-
-        /*private async void Send()
-        {
-            HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri(URL);
-            MultipartFormDataContent form = new MultipartFormDataContent();
-            HttpContent content = new StringContent("up_image");
-            form.Add(content, "up_image");
-            //var stream = await file.OpenStreamForReadAsync();
-            var stream = new MemoryStream();
-            bitmap.Save(stream, ImageFormat.Png);
-            
-            content = new StreamContent(stream);
-            //MessageBox.Show(stream.Length.ToString());
-            content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
-            {
-                Name = "up_image",
-                FileName = filename,
-            };
-            content.Headers.TryAddWithoutValidation("type", "image/png");
-            content.Headers.TryAddWithoutValidation("content-length", stream.Length.ToString());
-            form.Add(content);
-            MessageBox.Show(content.Headers.ToString());
-
-            //var response = await client.PostAsync("upload.php", form);
-            var response = await client.PostAsync(URL, form);*/
         }
     }
 
