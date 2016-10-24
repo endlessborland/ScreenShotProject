@@ -33,7 +33,7 @@
             this.url_label = new System.Windows.Forms.Label();
             this.url_input = new System.Windows.Forms.TextBox();
             this.Notification_Icon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.Save_button = new System.Windows.Forms.Button();
+            this.Screenshot_button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // url_label
@@ -61,21 +61,22 @@
             this.Notification_Icon.Text = "ScreenShot";
             this.Notification_Icon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Notification_Icon_MouseDoubleClick_1);
             // 
-            // Save_button
+            // Screenshot_button
             // 
-            this.Save_button.Location = new System.Drawing.Point(301, 165);
-            this.Save_button.Name = "Save_button";
-            this.Save_button.Size = new System.Drawing.Size(75, 23);
-            this.Save_button.TabIndex = 3;
-            this.Save_button.Text = "Save";
-            this.Save_button.UseVisualStyleBackColor = true;
+            this.Screenshot_button.Location = new System.Drawing.Point(15, 35);
+            this.Screenshot_button.Name = "Screenshot_button";
+            this.Screenshot_button.Size = new System.Drawing.Size(361, 67);
+            this.Screenshot_button.TabIndex = 3;
+            this.Screenshot_button.Text = "ScreenShot!";
+            this.Screenshot_button.UseVisualStyleBackColor = true;
+            this.Screenshot_button.Click += new System.EventHandler(this.Screenshot_button_Click);
             // 
             // TestWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(388, 200);
-            this.Controls.Add(this.Save_button);
+            this.ClientSize = new System.Drawing.Size(388, 112);
+            this.Controls.Add(this.Screenshot_button);
             this.Controls.Add(this.url_input);
             this.Controls.Add(this.url_label);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -93,7 +94,7 @@
         private System.Windows.Forms.Label url_label;
         private System.Windows.Forms.TextBox url_input;
         private System.Windows.Forms.NotifyIcon Notification_Icon;
-        private System.Windows.Forms.Button Save_button;
+        private System.Windows.Forms.Button Screenshot_button;
     }
 }
 

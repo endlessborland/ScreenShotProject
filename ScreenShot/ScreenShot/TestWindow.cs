@@ -54,5 +54,10 @@ namespace ScreenShot
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
+
+        private void Screenshot_button_Click(object sender, EventArgs e)
+        {
+            CaptureScreen();
+        }
     }
 }
