@@ -1,0 +1,234 @@
+﻿using System;
+using System.Web.Script.Serialization;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Net;
+
+namespace ScreenShot
+{
+    class ScreenShot
+    {
+        /// <summary>
+        /// Simplification for checking internet access
+        /// </summary>
+        public enum ConnectionStatus
+        {
+            NotConnected = 0,
+            Connected = 1
+        }
+
+        /// <summary>
+        /// Server URL
+        /// </summary>
+        private string URL;
+
+        /// <summary>
+        /// Sets the URL for the server
+        /// </summary>
+        /// <param name="URL">Server URL</param>
+        public ScreenShot(string URL)
+        {
+            this.URL = URL;
+        }
+
+        /// <summary>
+        /// Parses server answer
+        /// </summary>
+        /// <param name="answer">Server answer as string</param>
+        /// <returns>Server file name</returns>
+        public string ParseAnswer(string response)
+        {
+            if (response == null)
+            {
+                return "No data availible";
+            }
+            try
+            {
+                var json = new JavaScriptSerializer();
+                var data = json.Deserialize<Dictionary<string, string>>(response);
+                return data["filename"];
+            }
+            catch
+            {
+                MessageBox.Show("Something went wrong");
+                return "No data availible";
+            }
+        }
+
+        /// <summary>
+        /// Gets answer from the server
+        /// </summary>
+        /// <returns>Server answer as string or "No connection"</returns>
+        public async Task<string> GetImageDataFromServer()
+        {
+            try
+            {
+                var path = new DirectoryInfo(Environment.GetEnvironmentVariable("TEMP") + "\\ScreenShotTool");
+                CheckDirectory(path);
+                using (Bitmap bitmap = CaptureScreen(new Point(Cursor.Position.X, Cursor.Position.Y)))
+                {
+                    Save(bitmap, path);
+                    if (CheckInternet() == ConnectionStatus.NotConnected)
+                    {
+                        MessageBox.Show("Sorry, but the internet doesn't work");
+                        return "No connection";
+                    }
+                    return await Send(bitmap, URL);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("This is what went wrong: " + e.Message + e.ToString());
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Captures the screen
+        /// </summary>
+        /// <param name="mousePosition">Mouse Position</param>
+        /// <param name="bitmap">Image</param>
+        /// <returns>Captured screen image</returns>
+        private Bitmap CaptureScreen(Point mousePosition)
+        {
+            Rectangle bounds = Screen.GetBounds(mousePosition);
+            var bitmap = new Bitmap(bounds.Width, bounds.Height);
+            using (Graphics gr = Graphics.FromImage(bitmap))
+            {
+                gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
+            }
+            return bitmap;
+        }
+
+        /// <summary>
+        /// Saves the bitmap at path
+        /// </summary>
+        /// <param name="bitmap">Bitmap image</param>
+        /// <param name="path">DirectoryInfo path</param>
+        private void Save(Bitmap bitmap, DirectoryInfo path)
+        {
+            bitmap.Save(GenerateName(path), ImageFormat.Png);
+        }
+
+        /// <summary>
+        /// Generates name of the image
+        /// </summary>
+        /// <param name="path">Directory</param>
+        /// <returns>Returns image name</returns>
+        private string GenerateName(DirectoryInfo path)
+        {
+            try
+            {
+                return path.FullName + "\\" + (path.GetFiles().Count() + 1) + ".png";
+            }
+            catch (OverflowException)
+            {
+                MessageBox.Show("Too many files. This one will be named 0.png");
+                return path.FullName + "\\" + 0 + ".png";
+            }
+        }
+
+        /// <summary>
+        /// Checks the existance of the path
+        /// If the path doesn't exist, creates one
+        /// </summary>
+        /// <param name="path">The path to check</param>
+        private void CheckDirectory(DirectoryInfo path)
+        {
+                if (!path.Exists)
+                    path.Create();
+        }
+
+        /// <summary>
+        /// Converts bitmap to byte[]
+        /// </summary>
+        /// <param name="bitmap">Image itself</param>
+        /// <returns>Bitmap as byte[]</returns>
+        private byte[] ToByte(Bitmap bitmap)
+        {
+            var converter = new ImageConverter();
+            return (byte[])converter.ConvertTo(bitmap, typeof(byte[]));
+        }
+
+        /// <summary>
+        /// Sends an image to server and gets response
+        /// </summary>
+        /// <param name="bitmap">Image itself</param>
+        /// <param name="url">Server address</param>
+        /// <returns>Server response as string</returns>
+        private async Task<string> Send(Bitmap bitmap, string url)
+        {
+            using (var requestContent = new MultipartFormDataContent())
+            {
+                using (var imageContent = new ByteArrayContent(ToByte(bitmap)))
+                {
+                    imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+                    requestContent.Add(imageContent, "up_image", "image.png");
+                    using (var client = new HttpClient())
+                    {
+                        HttpResponseMessage response = await client.PostAsync(url, requestContent);
+                        return await response.Content.ReadAsStringAsync(); // Wait for content to be read and return it as string
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Chtcks the internet connection
+        /// </summary>
+        /// <returns>ConnectionStatus</returns>
+        private ConnectionStatus CheckInternet()
+        {
+            try
+            {
+                IPHostEntry entry = Dns.GetHostEntry("dns.msftncsi.com");
+                if (entry.AddressList.Length == 0)
+                {
+                    return ConnectionStatus.NotConnected;
+                }
+                else
+                {
+                    if (!entry.AddressList[0].ToString().Equals("131.107.255.255"))
+                    {
+                        return ConnectionStatus.NotConnected;
+                    }
+                }
+            }
+            catch
+            {
+                return ConnectionStatus.NotConnected;
+            }
+            var request = (HttpWebRequest)HttpWebRequest.Create("http://www.msftncsi.com/ncsi.txt");
+            try
+            {
+                var responce = (HttpWebResponse)request.GetResponse();
+                if (responce.StatusCode != HttpStatusCode.OK)
+                {
+                    return ConnectionStatus.NotConnected;
+                }
+                using (var sr = new StreamReader(responce.GetResponseStream()))
+                {
+                    if (sr.ReadToEnd().Equals("Microsoft NCSI"))
+                    {
+                        return ConnectionStatus.Connected;
+                    }
+                    else
+                    {
+                        return ConnectionStatus.NotConnected;
+                    }
+                }
+            }
+            catch
+            {
+                return ConnectionStatus.NotConnected;
+            }
+        }
+    }
+}
