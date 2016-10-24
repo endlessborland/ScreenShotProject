@@ -25,6 +25,15 @@ namespace ScreenShot
         }
 
         /// <summary>
+        /// Simplification for parsing JSON strings
+        /// </summary>
+        public enum ResponseType
+        {
+            Image = 0,
+            Info = 1
+        }
+
+        /// <summary>
         /// Server URL
         /// </summary>
         private string URL;
@@ -39,26 +48,48 @@ namespace ScreenShot
         }
 
         /// <summary>
-        /// Parses server answer
+        /// Parses JSON
         /// </summary>
-        /// <param name="answer">Server answer as string</param>
-        /// <returns>Server file name</returns>
-        public string ParseAnswer(string response)
+        /// <param name="response">JSON</param>
+        /// <param name="type">ResponseType</param>
+        /// <returns>Single value from parsed string</returns>
+        public string ParseAnswer(string response, ResponseType type)
         {
-            if (response == null)
+            if (type == ResponseType.Image)
             {
-                return "No data availible";
+                if (response == null)
+                {
+                    return "No data availible";
+                }
+                try
+                {
+                    var json = new JavaScriptSerializer();
+                    var data = json.Deserialize<Dictionary<string, string>>(response);
+                    return data["filename"];
+                }
+                catch
+                {
+                    MessageBox.Show("Something went wrong");
+                    return "No data availible";
+                }
             }
-            try
+            else
             {
-                var json = new JavaScriptSerializer();
-                var data = json.Deserialize<Dictionary<string, string>>(response);
-                return data["filename"];
-            }
-            catch
-            {
-                MessageBox.Show("Something went wrong");
-                return "No data availible";
+                if (response == null)
+                {
+                    return "Server if offline";
+                }
+                try
+                {
+                    var json = new JavaScriptSerializer();
+                    var data = json.Deserialize<Dictionary<string, string>>(response);
+                    return data["version"];
+                }
+                catch
+                {
+                    MessageBox.Show("Server is most likely offline");
+                    return "Server if offline";
+                }
             }
         }
 
@@ -80,7 +111,12 @@ namespace ScreenShot
                         MessageBox.Show("Sorry, but the internet doesn't work");
                         return "No connection";
                     }
-                    return await Send(bitmap, URL);
+                    if (ParseAnswer(ServerInfo(URL), ResponseType.Info) == null || ParseAnswer(ServerInfo(URL), ResponseType.Info) == "Server if offline")
+                    {
+                        MessageBox.Show("Sorry, but the server if offline");
+                        return "No connection";
+                    }
+                    return ParseAnswer(await Send(bitmap, URL), ResponseType.Image);
                 }
             }
             catch (Exception e)
@@ -177,6 +213,29 @@ namespace ScreenShot
                         return await response.Content.ReadAsStringAsync(); // Wait for content to be read and return it as string
                     }
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Gets server info
+        /// </summary>
+        /// <param name="url">Server url</param>
+        /// <returns>JSON answer</returns>
+        public string ServerInfo(string url)
+        {
+            try
+            {
+                var request = WebRequest.Create(url.Replace("upload", "info"));
+                request.Timeout = 1000;
+                var stream = request.GetResponse().GetResponseStream();
+                var sr = new StreamReader(stream);
+                string value = sr.ReadToEnd();
+                sr.Close();
+                return value;
+            }
+            catch
+            {
+                return null;
             }
         }
 

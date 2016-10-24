@@ -15,6 +15,7 @@ namespace ScreenShot
             hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(hook_KeyPressed);
             hook.RegisterHotKey(ModifierKey.None, Keys.PrintScreen);
             url_input.Text = URL;
+
         }
 
         private void hook_KeyPressed(object sender, KeyPressedEventArgs e)
@@ -47,7 +48,7 @@ namespace ScreenShot
             string response = await screenshot.GetImageDataFromServer();
             if (response != "No connection")
             {
-                var response_window = new Answer(url_input.Text, screenshot.ParseAnswer(response));
+                var response_window = new Answer(url_input.Text, response);
                 response_window.Show();
             }
             screenshot = null;
