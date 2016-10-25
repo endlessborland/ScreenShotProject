@@ -7,15 +7,12 @@ namespace ScreenShot
     {
         KeyboardHook hook = new KeyboardHook();
 
-        private string URL = "http://192.168.1.151:4567/upload";
-
         public TestWindow()
         {
             InitializeComponent();
             hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(hook_KeyPressed);
             hook.RegisterHotKey(ModifierKey.None, Keys.PrintScreen);
-            url_input.Text = URL;
-
+            url_input.Text = Properties.Settings.Default.URL;
         }
 
         private void hook_KeyPressed(object sender, KeyPressedEventArgs e)
@@ -44,6 +41,8 @@ namespace ScreenShot
 
         private async void CaptureScreen()
         {
+            Properties.Settings.Default.URL = url_input.Text;
+            Properties.Settings.Default.Save();
             ScreenShot screenshot = new ScreenShot(url_input.Text);
             string response = await screenshot.GetImageDataFromServer();
             if (response != "No connection")
