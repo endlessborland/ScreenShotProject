@@ -226,8 +226,8 @@ namespace ScreenShot
             try
             {
                 var request = WebRequest.Create(url.Replace("upload", "info"));
-                request.Timeout = 1000;
-                var stream = request.GetResponse().GetResponseStream();
+                request.Timeout = 5000;
+                var stream = request.GetResponse().GetResponseStream(); // This one isn't async!
                 var sr = new StreamReader(stream);
                 string value = sr.ReadToEnd();
                 sr.Close();
