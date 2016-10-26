@@ -37,14 +37,16 @@ namespace ScreenShot
         /// Server URL
         /// </summary>
         private string URL;
+        private string PATH;
 
         /// <summary>
         /// Sets the URL for the server
         /// </summary>
         /// <param name="URL">Server URL</param>
-        public ScreenShot(string url)
+        public ScreenShot(string url, string port, string path)
         {
-            URL = url;
+            URL = "http://" + url + ":" + port + "/upload";
+            PATH = path;
         }
 
         /// <summary>
@@ -101,7 +103,7 @@ namespace ScreenShot
         {
             try
             {
-                var path = new DirectoryInfo(Environment.GetEnvironmentVariable("TEMP") + "\\ScreenShotTool"); // A path at %TEMP%\ScreenShotTool
+                var path = new DirectoryInfo(PATH);
                 CheckDirectory(path); // Creating the directory if needed
                 using (Bitmap bitmap = CaptureScreen(new Point(Cursor.Position.X, Cursor.Position.Y))) // Making a screenshot
                 {
