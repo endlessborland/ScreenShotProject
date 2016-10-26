@@ -9,30 +9,11 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Net;
 
 namespace ScreenShot
 {
     class ScreenShot
     {
-        /// <summary>
-        /// Simplification for checking internet access
-        /// </summary>
-        public enum ConnectionStatus
-        {
-            NotConnected = 0,
-            Connected = 1
-        }
-
-        /// <summary>
-        /// Simplification for parsing JSON strings
-        /// </summary>
-        public enum ResponseType
-        {
-            Image = 0,
-            Info = 1
-        }
-
         /// <summary>
         /// Server URL
         /// </summary>
@@ -55,10 +36,8 @@ namespace ScreenShot
         /// <param name="response">JSON</param>
         /// <param name="type">ResponseType</param>
         /// <returns>Single value from parsed string</returns>
-        public string ParseAnswer(string response, ResponseType type)
+        public string ParseAnswer(string response)
         {
-            if (type == ResponseType.Image) // Response when image is uploaded
-            {
                 if (response == null)
                 {
                     return "No data availible";
@@ -74,25 +53,6 @@ namespace ScreenShot
                     MessageBox.Show("Something went wrong");
                     return "No data availible";
                 }
-            }
-            else // Response when info is requested
-            {
-                if (response == null)
-                {
-                    return "Server if offline";
-                }
-                try
-                {
-                    var json = new JavaScriptSerializer(); // Parsing JSON-response into a Dictionary
-                    var data = json.Deserialize<Dictionary<string, string>>(response);
-                    return data["version"]; // Value of "version"
-                }
-                catch
-                {
-                    MessageBox.Show("Server is most likely offline");
-                    return "Server if offline";
-                }
-            }
         }
 
         /// <summary>
@@ -108,17 +68,10 @@ namespace ScreenShot
                 using (Bitmap bitmap = CaptureScreen(new Point(Cursor.Position.X, Cursor.Position.Y))) // Making a screenshot
                 {
                     Save(bitmap, path); // Saving screenshot at %TEMP%\ScreenShotTool
-                    if (CheckInternet() == ConnectionStatus.NotConnected)
-                    {
-                        MessageBox.Show("Sorry, but the internet doesn't work");
-                        return "No connection";
-                    }
-                    if (ParseAnswer(ServerInfo(URL), ResponseType.Info) == null || ParseAnswer(ServerInfo(URL), ResponseType.Info) == "Server if offline")
-                    {
-                        MessageBox.Show("Sorry, but the server if offline");
-                        return "No connection";
-                    }
-                    return ParseAnswer(await Send(bitmap, URL), ResponseType.Image); // Sending POST with image and parsing the JSON response
+                    if (VersionControl.VersionUpToDate(URL))
+                        return ParseAnswer(await Send(bitmap, URL)); // Sending POST with image and parsing the JSON response
+                    else
+                        return null;
                 }
             }
             catch (Exception e)
@@ -215,80 +168,6 @@ namespace ScreenShot
                         return await response.Content.ReadAsStringAsync(); // Wait for content to be read and return it as string
                     }
                 }
-            }
-        }
-        
-        /// <summary>
-        /// Gets server info
-        /// </summary>
-        /// <param name="url">Server url</param>
-        /// <returns>JSON answer</returns>
-        public string ServerInfo(string url)
-        {
-            try
-            {
-                var request = WebRequest.Create(url.Replace("upload", "info"));
-                request.Timeout = 5000;
-                var stream = request.GetResponse().GetResponseStream(); // This one isn't async!
-                var sr = new StreamReader(stream);
-                string value = sr.ReadToEnd();
-                sr.Close();
-                return value;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Chtcks the internet connection
-        /// </summary>
-        /// <returns>ConnectionStatus</returns>
-        private ConnectionStatus CheckInternet()
-        {
-            try
-            {
-                IPHostEntry entry = Dns.GetHostEntry("dns.msftncsi.com");
-                if (entry.AddressList.Length == 0)
-                {
-                    return ConnectionStatus.NotConnected;
-                }
-                else
-                {
-                    if (!entry.AddressList[0].ToString().Equals("131.107.255.255"))
-                    {
-                        return ConnectionStatus.NotConnected;
-                    }
-                }
-            }
-            catch
-            {
-                return ConnectionStatus.NotConnected;
-            }
-            var request = (HttpWebRequest)HttpWebRequest.Create("http://www.msftncsi.com/ncsi.txt");
-            try
-            {
-                var responce = (HttpWebResponse)request.GetResponse();
-                if (responce.StatusCode != HttpStatusCode.OK)
-                {
-                    return ConnectionStatus.NotConnected;
-                }
-                using (var sr = new StreamReader(responce.GetResponseStream()))
-                {
-                    if (sr.ReadToEnd().Equals("Microsoft NCSI"))
-                    {
-                        return ConnectionStatus.Connected;
-                    }
-                    else
-                    {
-                        return ConnectionStatus.NotConnected;
-                    }
-                }
-            }
-            catch
-            {
-                return ConnectionStatus.NotConnected;
             }
         }
     }

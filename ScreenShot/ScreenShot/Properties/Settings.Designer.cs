@@ -61,25 +61,13 @@ namespace ScreenShot.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1.0.3")]
-        public string version {
-            get {
-                return ((string)(this["version"]));
-            }
-            set {
-                this["version"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool FirstRun {
+        public bool FirstLaunch {
             get {
-                return ((bool)(this["FirstRun"]));
+                return ((bool)(this["FirstLaunch"]));
             }
             set {
-                this["FirstRun"] = value;
+                this["FirstLaunch"] = value;
             }
         }
     }

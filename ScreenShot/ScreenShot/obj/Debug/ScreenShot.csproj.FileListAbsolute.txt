@@ -38,3 +38,4 @@ D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.P
 D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.csproj.GenerateResource.Cache
 D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\bin\Debug\ScreenShot.exe
 D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\bin\Debug\ScreenShot.pdb
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.AboutBox.resources

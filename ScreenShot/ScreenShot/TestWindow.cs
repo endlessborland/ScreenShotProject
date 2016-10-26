@@ -26,28 +26,26 @@ namespace ScreenShot
             if (this.WindowState == FormWindowState.Minimized)
             {
                 this.ShowInTaskbar = false;
-                Notification_Icon.Visible = true;
+                notificationIcon.Visible = true;
             }
         }
 
-        private void Notification_Icon_MouseDoubleClick_1(object sender, MouseEventArgs e)
+        private void notificationIcon_MouseDoubleClick_1(object sender, MouseEventArgs e)
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
                 this.WindowState = FormWindowState.Normal;
                 this.ShowInTaskbar = true;
-                Notification_Icon.Visible = false;
+                notificationIcon.Visible = false;
             }
         }
 
         private async void CaptureScreen()
         {
-            Properties.Settings.Default.URL = urlinput.Text;
-            Properties.Settings.Default.path = path.Text;
-            Properties.Settings.Default.Save();
+            Settings.SaveNewSettings(urlinput.Text, path.Text);
             ScreenShot screenshot = new ScreenShot(Properties.Settings.Default.URL, Properties.Settings.Default.port, Properties.Settings.Default.path);
             string response = await screenshot.GetImageDataFromServer();
-            if (response != "No connection")
+            if (response != null)
             {
                 var response_window = new Answer(Properties.Settings.Default.URL, response, Properties.Settings.Default.port);
                 response_window.Show();
@@ -57,12 +55,9 @@ namespace ScreenShot
             GC.WaitForPendingFinalizers();
         }
 
-        private void Screenshot_button_Click(object sender, EventArgs e)
+        private void restoreDefaults_button_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.URL = "192.168.1.6";
-            Properties.Settings.Default.port = "4567";
-            Properties.Settings.Default.FirstRun = true;
-            Properties.Settings.Default.Save();
+            Settings.RestoreDefaults();
             urlinput.Text = Properties.Settings.Default.URL;
             path.Text = Properties.Settings.Default.path;
         }
@@ -73,6 +68,17 @@ namespace ScreenShot
             {
                 path.Text = folderBrowserDialog.SelectedPath;
             }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void infoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var about = new AboutBox();
+            about.Show();
         }
     }
 }

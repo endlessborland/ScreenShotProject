@@ -12,12 +12,7 @@ namespace ScreenShot
         [STAThread]
         static void Main()
         {
-            if (Properties.Settings.Default.FirstRun)
-            {
-                Properties.Settings.Default.path = Environment.GetEnvironmentVariable("TEMP") + "\\ScreenShotTool"; // A path at %TEMP%\ScreenShotTool
-                Properties.Settings.Default.FirstRun = false;
-                Properties.Settings.Default.Save();
-            }
+            Settings.CheckFirstLaunch();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new TestWindow());
