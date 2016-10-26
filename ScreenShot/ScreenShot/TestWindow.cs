@@ -23,19 +23,20 @@ namespace ScreenShot
 
         private void TestWindow_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                this.ShowInTaskbar = false;
+                ShowInTaskbar = false;
                 notificationIcon.Visible = true;
             }
+            return;
         }
 
         private void notificationIcon_MouseDoubleClick_1(object sender, MouseEventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                this.WindowState = FormWindowState.Normal;
-                this.ShowInTaskbar = true;
+                WindowState = FormWindowState.Normal;
+                ShowInTaskbar = true;
                 notificationIcon.Visible = false;
             }
         }
@@ -77,8 +78,15 @@ namespace ScreenShot
 
         private void infoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var about = new AboutBox();
-            about.Show();
+            using (var about = new AboutBox())
+            {
+                about.ShowDialog();
+            }
+        }
+
+        private void TestWindow_Load(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
         }
     }
 }

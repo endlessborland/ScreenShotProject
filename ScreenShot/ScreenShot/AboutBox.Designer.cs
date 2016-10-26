@@ -69,7 +69,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "AboutBox";
-            this.Text = "AboutBox";
+            this.Text = "About";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -102,7 +102,7 @@
             this.infoToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip.Name = "contextMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(153, 70);
+            this.contextMenuStrip.Size = new System.Drawing.Size(96, 48);
             // 
             // infoToolStripMenuItem
             // 
@@ -133,6 +133,7 @@
             this.KeyPreview = true;
             this.Name = "TestWindow";
             this.Text = "Settings";
+            this.Load += new System.EventHandler(this.TestWindow_Load);
             this.Resize += new System.EventHandler(this.TestWindow_Resize);
             this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
