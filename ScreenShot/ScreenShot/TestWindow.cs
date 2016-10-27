@@ -27,6 +27,7 @@ namespace ScreenShot
             {
                 ShowInTaskbar = false;
                 notificationIcon.Visible = true;
+                Hide();
             }
             return;
         }
@@ -35,6 +36,7 @@ namespace ScreenShot
         {
             if (WindowState == FormWindowState.Minimized)
             {
+                Show();
                 WindowState = FormWindowState.Normal;
                 ShowInTaskbar = true;
                 notificationIcon.Visible = false;
