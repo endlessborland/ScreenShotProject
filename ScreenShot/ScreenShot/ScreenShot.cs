@@ -50,8 +50,9 @@ namespace ScreenShot
                 }
                 catch
                 {
-                    MessageBox.Show("Something went wrong");
-                    return "No data availible";
+                MessageBox.Show("Something went wrong while parsing JSON answer", "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                    MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
+                return "No data availible";
                 }
         }
 
@@ -76,7 +77,8 @@ namespace ScreenShot
             }
             catch (Exception e)
             {
-                MessageBox.Show("This is what went wrong: " + e.Message + e.ToString());
+                MessageBox.Show("This is what went wrong: " + e.Message + e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                        MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
                 return null;
             }
         }
@@ -121,7 +123,9 @@ namespace ScreenShot
             }
             catch (OverflowException)
             {
-                MessageBox.Show("Too many files. This one will be named 0.png"); // If to many files -> name file "0.png"
+                MessageBox.Show("Too many files. This one will be named 0.png", "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                        MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
+                // If to many files -> name file "0.png"
                 return path.FullName + "\\" + 0 + ".png";
             }
         }

@@ -23,7 +23,8 @@ namespace ScreenShot
             else
             {
                 if (response != null)
-                    MessageBox.Show("The client if outdated. Please upgrade");
+                    MessageBox.Show("The client if outdated. Please upgrade", "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                        MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
                 return false;
             }
         }
@@ -118,7 +119,8 @@ namespace ScreenShot
             }
             catch
             {
-                MessageBox.Show("Server is most likely offline");
+                MessageBox.Show("Server is most likely offline", "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                    MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
                 return null;
             }
         }
