@@ -6,7 +6,7 @@ namespace ScreenShot
 {
     public partial class Answer : Form
     {
-        public Answer(string url, string filename)
+        public Answer(string url, string filename, string port)
         {
             InitializeComponent();
             StartPosition = FormStartPosition.Manual;
@@ -14,7 +14,8 @@ namespace ScreenShot
             Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
             if (filename != "No data availible")
             {
-                URL.Text = url.Replace("/upload", "/") + filename;
+                var completeurl = "http://" + url + ":" + port + "/";
+                URL.Text = completeurl + filename;
                 Clipboard.SetText(URL.Text);
             }
             else
@@ -22,6 +23,11 @@ namespace ScreenShot
         }
 
         private void exit_button_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
         {
             Close();
         }

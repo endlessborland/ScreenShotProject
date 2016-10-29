@@ -28,8 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.exit_button = new System.Windows.Forms.Button();
             this.URL = new System.Windows.Forms.TextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // exit_button
@@ -48,6 +50,12 @@
             this.URL.Name = "URL";
             this.URL.Size = new System.Drawing.Size(293, 20);
             this.URL.TabIndex = 1;
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 5000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Answer
             // 
@@ -70,5 +78,6 @@
 
         private System.Windows.Forms.Button exit_button;
         private System.Windows.Forms.TextBox URL;
+        private System.Windows.Forms.Timer timer1;
     }
 }

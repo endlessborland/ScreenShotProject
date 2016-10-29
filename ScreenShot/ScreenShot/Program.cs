@@ -11,6 +11,7 @@ namespace ScreenShot
         [STAThread]
         static void Main()
         {
+            Settings.CheckFirstLaunch();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new TestWindow());

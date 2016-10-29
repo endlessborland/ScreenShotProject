@@ -7,14 +7,13 @@ namespace ScreenShot
     {
         KeyboardHook hook = new KeyboardHook();
 
-        private string URL = "http://192.168.1.151:4567/upload";
-
         public TestWindow()
         {
             InitializeComponent();
             hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(hook_KeyPressed);
             hook.RegisterHotKey(ModifierKey.None, Keys.PrintScreen);
-            url_input.Text = URL;
+            urlinput.Text = Properties.Settings.Default.URL;
+            path.Text = Properties.Settings.Default.path;
         }
 
         private void hook_KeyPressed(object sender, KeyPressedEventArgs e)
@@ -24,30 +23,34 @@ namespace ScreenShot
 
         private void TestWindow_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                this.ShowInTaskbar = false;
-                Notification_Icon.Visible = true;
+                ShowInTaskbar = false;
+                notificationIcon.Visible = true;
+                Hide();
             }
+            return;
         }
 
-        private void Notification_Icon_MouseDoubleClick_1(object sender, MouseEventArgs e)
+        private void notificationIcon_MouseDoubleClick_1(object sender, MouseEventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                this.WindowState = FormWindowState.Normal;
-                this.ShowInTaskbar = true;
-                Notification_Icon.Visible = false;
+                Show();
+                WindowState = FormWindowState.Normal;
+                ShowInTaskbar = true;
+                notificationIcon.Visible = false;
             }
         }
 
         private async void CaptureScreen()
         {
-            ScreenShot screenshot = new ScreenShot(url_input.Text);
+            Settings.SaveNewSettings(urlinput.Text, path.Text);
+            ScreenShot screenshot = new ScreenShot(Properties.Settings.Default.URL, Properties.Settings.Default.port, Properties.Settings.Default.path);
             string response = await screenshot.GetImageDataFromServer();
-            if (response != "No connection")
+            if (response != null)
             {
-                var response_window = new Answer(url_input.Text, screenshot.ParseAnswer(response));
+                var response_window = new Answer(Properties.Settings.Default.URL, response, Properties.Settings.Default.port);
                 response_window.Show();
             }
             screenshot = null;
@@ -55,9 +58,37 @@ namespace ScreenShot
             GC.WaitForPendingFinalizers();
         }
 
-        private void Screenshot_button_Click(object sender, EventArgs e)
+        private void restoreDefaults_button_Click(object sender, EventArgs e)
         {
-            CaptureScreen();
+            Settings.RestoreDefaults();
+            urlinput.Text = Properties.Settings.Default.URL;
+            path.Text = Properties.Settings.Default.path;
+        }
+
+        private void path_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                path.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void infoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var about = new AboutBox())
+            {
+                about.ShowDialog();
+            }
+        }
+
+        private void TestWindow_Load(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
         }
     }
 }

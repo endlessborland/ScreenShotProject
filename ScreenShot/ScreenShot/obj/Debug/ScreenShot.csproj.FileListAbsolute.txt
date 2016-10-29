@@ -28,3 +28,14 @@ D:\Desktop\screenshot_project\ScreenShot\ScreenShot\obj\Debug\ScreenShot.Answer.
 D:\Desktop\screenshot_project\ScreenShot\ScreenShot\obj\Debug\ScreenShot.TestWindow.resources
 D:\Desktop\screenshot_project\ScreenShot\ScreenShot\obj\Debug\ScreenShot.Properties.Resources.resources
 D:\Desktop\screenshot_project\ScreenShot\ScreenShot\obj\Debug\ScreenShot.csproj.GenerateResource.Cache
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\bin\Debug\ScreenShot.exe.config
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.exe
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.pdb
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.csprojResolveAssemblyReference.cache
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.Answer.resources
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.TestWindow.resources
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.Properties.Resources.resources
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.csproj.GenerateResource.Cache
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\bin\Debug\ScreenShot.exe
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\bin\Debug\ScreenShot.pdb
+D:\Desktop\Screenshot_project_debug\ScreenShot\ScreenShot\obj\Debug\ScreenShot.AboutBox.resources

@@ -9,57 +9,51 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Net;
 
 namespace ScreenShot
 {
     class ScreenShot
     {
         /// <summary>
-        /// Simplification for checking internet access
-        /// </summary>
-        public enum ConnectionStatus
-        {
-            NotConnected = 0,
-            Connected = 1
-        }
-
-        /// <summary>
         /// Server URL
         /// </summary>
         private string URL;
+        private string PATH;
 
         /// <summary>
         /// Sets the URL for the server
         /// </summary>
         /// <param name="URL">Server URL</param>
-        public ScreenShot(string URL)
+        public ScreenShot(string url, string port, string path)
         {
-            this.URL = URL;
+            URL = "http://" + url + ":" + port + "/upload";
+            PATH = path;
         }
 
         /// <summary>
-        /// Parses server answer
+        /// Parses JSON
         /// </summary>
-        /// <param name="answer">Server answer as string</param>
-        /// <returns>Server file name</returns>
+        /// <param name="response">JSON</param>
+        /// <param name="type">ResponseType</param>
+        /// <returns>Single value from parsed string</returns>
         public string ParseAnswer(string response)
         {
-            if (response == null)
-            {
+                if (response == null)
+                {
+                    return "No data availible";
+                }
+                try
+                {
+                    var json = new JavaScriptSerializer();
+                    var data = json.Deserialize<Dictionary<string, string>>(response); // Parsing JSON-response into a Dictionary
+                    return data["filename"]; // Value of "filename"
+                }
+                catch
+                {
+                MessageBox.Show("Something went wrong while parsing JSON answer", "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                    MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
                 return "No data availible";
-            }
-            try
-            {
-                var json = new JavaScriptSerializer();
-                var data = json.Deserialize<Dictionary<string, string>>(response);
-                return data["filename"];
-            }
-            catch
-            {
-                MessageBox.Show("Something went wrong");
-                return "No data availible";
-            }
+                }
         }
 
         /// <summary>
@@ -70,22 +64,21 @@ namespace ScreenShot
         {
             try
             {
-                var path = new DirectoryInfo(Environment.GetEnvironmentVariable("TEMP") + "\\ScreenShotTool");
-                CheckDirectory(path);
-                using (Bitmap bitmap = CaptureScreen(new Point(Cursor.Position.X, Cursor.Position.Y)))
+                var path = new DirectoryInfo(PATH);
+                CheckDirectory(path); // Creating the directory if needed
+                using (Bitmap bitmap = CaptureScreen(new Point(Cursor.Position.X, Cursor.Position.Y))) // Making a screenshot
                 {
-                    Save(bitmap, path);
-                    if (CheckInternet() == ConnectionStatus.NotConnected)
-                    {
-                        MessageBox.Show("Sorry, but the internet doesn't work");
-                        return "No connection";
-                    }
-                    return await Send(bitmap, URL);
+                    Save(bitmap, path); // Saving screenshot at %TEMP%\ScreenShotTool
+                    if (VersionControl.VersionUpToDate(URL))
+                        return ParseAnswer(await Send(bitmap, URL)); // Sending POST with image and parsing the JSON response
+                    else
+                        return null;
                 }
             }
             catch (Exception e)
             {
-                MessageBox.Show("This is what went wrong: " + e.Message + e.ToString());
+                MessageBox.Show("This is what went wrong: " + e.Message + e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                        MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
                 return null;
             }
         }
@@ -98,17 +91,17 @@ namespace ScreenShot
         /// <returns>Captured screen image</returns>
         private Bitmap CaptureScreen(Point mousePosition)
         {
-            Rectangle bounds = Screen.GetBounds(mousePosition);
-            var bitmap = new Bitmap(bounds.Width, bounds.Height);
+            Rectangle bounds = Screen.GetBounds(mousePosition); // Size of the screen where coursor located
+            var bitmap = new Bitmap(bounds.Width, bounds.Height); // Image itself
             using (Graphics gr = Graphics.FromImage(bitmap))
             {
-                gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
+                gr.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size); // Taking a screenshot
             }
             return bitmap;
         }
 
         /// <summary>
-        /// Saves the bitmap at path
+        /// Saves the bitmap at path as .PNG
         /// </summary>
         /// <param name="bitmap">Bitmap image</param>
         /// <param name="path">DirectoryInfo path</param>
@@ -126,11 +119,13 @@ namespace ScreenShot
         {
             try
             {
-                return path.FullName + "\\" + (path.GetFiles().Count() + 1) + ".png";
+                return path.FullName + "\\" + (path.GetFiles().Count() + 1) + ".png"; // Filename here is actually it's number in directory
             }
             catch (OverflowException)
             {
-                MessageBox.Show("Too many files. This one will be named 0.png");
+                MessageBox.Show("Too many files. This one will be named 0.png", "Error", MessageBoxButtons.OK, MessageBoxIcon.None,
+                        MessageBoxDefaultButton.Button1, (MessageBoxOptions)0x40000);  // MB_TOPMOST
+                // If to many files -> name file "0.png"
                 return path.FullName + "\\" + 0 + ".png";
             }
         }
@@ -165,7 +160,7 @@ namespace ScreenShot
         /// <returns>Server response as string</returns>
         private async Task<string> Send(Bitmap bitmap, string url)
         {
-            using (var requestContent = new MultipartFormDataContent())
+            using (var requestContent = new MultipartFormDataContent()) 
             {
                 using (var imageContent = new ByteArrayContent(ToByte(bitmap)))
                 {
@@ -177,57 +172,6 @@ namespace ScreenShot
                         return await response.Content.ReadAsStringAsync(); // Wait for content to be read and return it as string
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Chtcks the internet connection
-        /// </summary>
-        /// <returns>ConnectionStatus</returns>
-        private ConnectionStatus CheckInternet()
-        {
-            try
-            {
-                IPHostEntry entry = Dns.GetHostEntry("dns.msftncsi.com");
-                if (entry.AddressList.Length == 0)
-                {
-                    return ConnectionStatus.NotConnected;
-                }
-                else
-                {
-                    if (!entry.AddressList[0].ToString().Equals("131.107.255.255"))
-                    {
-                        return ConnectionStatus.NotConnected;
-                    }
-                }
-            }
-            catch
-            {
-                return ConnectionStatus.NotConnected;
-            }
-            var request = (HttpWebRequest)HttpWebRequest.Create("http://www.msftncsi.com/ncsi.txt");
-            try
-            {
-                var responce = (HttpWebResponse)request.GetResponse();
-                if (responce.StatusCode != HttpStatusCode.OK)
-                {
-                    return ConnectionStatus.NotConnected;
-                }
-                using (var sr = new StreamReader(responce.GetResponseStream()))
-                {
-                    if (sr.ReadToEnd().Equals("Microsoft NCSI"))
-                    {
-                        return ConnectionStatus.Connected;
-                    }
-                    else
-                    {
-                        return ConnectionStatus.NotConnected;
-                    }
-                }
-            }
-            catch
-            {
-                return ConnectionStatus.NotConnected;
             }
         }
     }
