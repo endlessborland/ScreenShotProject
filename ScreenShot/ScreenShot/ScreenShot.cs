@@ -15,15 +15,17 @@ namespace ScreenShot
     class ScreenShot
     {
         /// <summary>
-        /// Server URL
+        /// Server URL and local PATH
         /// </summary>
         private string URL;
         private string PATH;
 
         /// <summary>
-        /// Sets the URL for the server
+        /// Sets the basic preferences
         /// </summary>
-        /// <param name="URL">Server URL</param>
+        /// <param name="url">Server URL</param>
+        /// <param name="port">Server port</param>
+        /// <param name="path">Local path</param>
         public ScreenShot(string url, string port, string path)
         {
             URL = "http://" + url + ":" + port + "/upload";
@@ -59,7 +61,7 @@ namespace ScreenShot
         /// <summary>
         /// Gets answer from the server
         /// </summary>
-        /// <returns>Server answer as string or "No connection"</returns>
+        /// <returns>Server answer as string or null</returns>
         public async Task<string> GetImageDataFromServer()
         {
             try

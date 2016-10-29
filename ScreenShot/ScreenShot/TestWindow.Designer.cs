@@ -40,6 +40,8 @@
             this.path = new System.Windows.Forms.TextBox();
             this.pathlabel = new System.Windows.Forms.Label();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.port = new System.Windows.Forms.TextBox();
+            this.portLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,7 +95,7 @@
             // 
             // restoreDefaults
             // 
-            this.restoreDefaults.Location = new System.Drawing.Point(15, 61);
+            this.restoreDefaults.Location = new System.Drawing.Point(12, 93);
             this.restoreDefaults.Name = "restoreDefaults";
             this.restoreDefaults.Size = new System.Drawing.Size(361, 25);
             this.restoreDefaults.TabIndex = 3;
@@ -118,11 +120,29 @@
             this.pathlabel.TabIndex = 4;
             this.pathlabel.Text = "Path";
             // 
+            // port
+            // 
+            this.port.Location = new System.Drawing.Point(48, 61);
+            this.port.Name = "port";
+            this.port.Size = new System.Drawing.Size(328, 20);
+            this.port.TabIndex = 7;
+            // 
+            // portLabel
+            // 
+            this.portLabel.AutoSize = true;
+            this.portLabel.Location = new System.Drawing.Point(12, 64);
+            this.portLabel.Name = "portLabel";
+            this.portLabel.Size = new System.Drawing.Size(26, 13);
+            this.portLabel.TabIndex = 6;
+            this.portLabel.Text = "Port";
+            // 
             // TestWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(388, 98);
+            this.ClientSize = new System.Drawing.Size(388, 130);
+            this.Controls.Add(this.port);
+            this.Controls.Add(this.portLabel);
             this.Controls.Add(this.path);
             this.Controls.Add(this.pathlabel);
             this.Controls.Add(this.restoreDefaults);
@@ -153,6 +173,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem infoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.TextBox port;
+        private System.Windows.Forms.Label portLabel;
     }
 }
 

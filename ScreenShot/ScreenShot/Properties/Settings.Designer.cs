@@ -25,7 +25,7 @@ namespace ScreenShot.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("192.168.1.6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("80.240.212.66")]
         public string URL {
             get {
                 return ((string)(this["URL"]));
