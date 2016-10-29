@@ -14,6 +14,7 @@ namespace ScreenShot
             hook.RegisterHotKey(ModifierKey.None, Keys.PrintScreen);
             urlinput.Text = Properties.Settings.Default.URL;
             path.Text = Properties.Settings.Default.path;
+            port.Text = Properties.Settings.Default.port;
         }
 
         private void hook_KeyPressed(object sender, KeyPressedEventArgs e)
@@ -45,7 +46,7 @@ namespace ScreenShot
 
         private async void CaptureScreen()
         {
-            Settings.SaveNewSettings(urlinput.Text, path.Text);
+            Settings.SaveNewSettings(urlinput.Text, path.Text, port.Text);
             ScreenShot screenshot = new ScreenShot(Properties.Settings.Default.URL, Properties.Settings.Default.port, Properties.Settings.Default.path);
             string response = await screenshot.GetImageDataFromServer();
             if (response != null)
