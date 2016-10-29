@@ -9,7 +9,6 @@ namespace ScreenShot
         public Answer(string url, string filename, string port)
         {
             InitializeComponent();
-            var close = new System.Threading.Timer(CloseForm, this, 5000, 5000);
             StartPosition = FormStartPosition.Manual;
             Rectangle workingArea = Screen.GetWorkingArea(this);
             Location = new Point(workingArea.Right - Size.Width, workingArea.Bottom - Size.Height);
@@ -28,7 +27,7 @@ namespace ScreenShot
             Close();
         }
 
-        private void CloseForm(object o)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             Close();
         }
